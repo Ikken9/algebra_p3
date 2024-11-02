@@ -1,28 +1,37 @@
-import tkinter as tk
-from ui import LightsOutApp
+import pygame
+import sys
+from config_ui import ConfigUI
+from game_ui import GameUI
+from game_logic import LightsOutGame
 
-def start_game(size):
-    # Inicia el juego con el tamaño de grid especificado
-    root = tk.Tk()
-    root.title(f"Lights Out - {size}x{size}")
-    app = LightsOutApp(root, size)
-    root.mainloop()
+def main():
+    # Configuración de Pygame
+    pygame.init()
 
-def select_grid_size():
-    # Interfaz para seleccionar el tamaño del grid
-    root = tk.Tk()
-    root.title("Seleccionar Tamaño del Grid")
-    label = tk.Label(root, text="Selecciona el Tamaño del Grid (2x2 a 20x20):")
-    label.pack(pady=10)
+    # Dimensiones de la pantalla
+    SCREEN_WIDTH = 1000
+    SCREEN_HEIGHT = 600
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption("Lights Out")
 
-    size_var = tk.IntVar(value=5)
-    size_slider = tk.Scale(root, from_=2, to=20, orient="horizontal", variable=size_var)
-    size_slider.pack(pady=10)
+    clock = pygame.time.Clock()
 
-    start_button = tk.Button(root, text="Iniciar Juego", command=lambda: [root.destroy(), start_game(size_var.get())])
-    start_button.pack(pady=10)
+    # Configuración de la fuente
+    FONT = pygame.font.SysFont(None, 24)
 
-    root.mainloop()
+    # Iniciar pantalla de configuración
+    config_ui = ConfigUI(screen, clock, SCREEN_WIDTH, SCREEN_HEIGHT, FONT)
+    grid_size = config_ui.run()
+
+    # Iniciar el juego con el tamaño de grid seleccionado
+    game = LightsOutGame(grid_size)
+    game_ui = GameUI(screen, clock, SCREEN_WIDTH, SCREEN_HEIGHT, FONT, grid_size, game)
+    game_ui.run()
+
+    pygame.quit()
+    sys.exit()
 
 if __name__ == "__main__":
-    select_grid_size()
+    main()
+
+
